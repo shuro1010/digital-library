@@ -1,3 +1,11 @@
+素敵な楽曲ですね。「哀しみこえて」というタイトルと、オルゴールの音色、そして思い入れのあるメロディ……ぜひこの「表現の実験室」にふさわしい形で掲載しましょう。
+
+ご指示通り、一番下の「Memo」のブロックを削除し、指定のYouTube動画を埋め込んだコードを作成しました。
+スマホ等でも綺麗に見えるよう、既存のCSSクラス `video-container` を使用してレスポンシブ対応（画面幅に合わせて伸縮する設定）にしています。
+
+以下が修正後の完全なHTMLコードです。
+
+```html
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -173,11 +181,9 @@
 
     <div class="gallery">
 
-        <!-- 短歌カード：リンク付きに変更 -->
         <a href="https://shuro1010.blog.jp" class="item" target="_blank" rel="noopener noreferrer">
            <img src="higanbana.png" alt="彼岸花と夕暮れ" onerror="this.onerror=null; this.src='https://placehold.co/600x400/222/666?text=Higanbana';">
             <div class="caption">
-                <!-- タイトル削除 -->
                 <p>人生に意味などないさ<br>彼岸花燃える畦道泥む夕暮</p>
                 <p class="read-more">短歌ブログへ ↗</p>
             </div>
@@ -193,7 +199,6 @@
             </div>
         </div>
 
-        <!-- リンク付きカード -->
         <a href="https://note.com/shuro1010/n/n0684211200f4" class="item" target="_blank" rel="noopener noreferrer">
             <div class="text-content">
                 <h3>幻のフランス料理「シリトテ・ティエンヌ」</h3>
@@ -205,14 +210,16 @@
         </a>
 
         <div class="item">
-            <!-- 画像を差し替えました -->
             <img src="Gemini_Generated_Image_mu1a6imu1a6imu1a.png" alt="Art" onerror="this.onerror=null; this.src='https://placehold.co/600x800/222/666?text=Art+Image';">
         </div>
 
         <div class="item">
+            <div class="video-container">
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/dGDDaQfjfMg?si=3o2pEtF2UzUj_LZw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
             <div class="caption">
-                <h3>Memo</h3>
-                <p>アイデアの断片。整理されていない思考。ここには何でも置いていい。それが実験室のルール。</p>
+                <h3>哀しみこえて (Orgel Ver.)</h3>
+                <p>自作のオルゴール曲。</p>
             </div>
         </div>
 
@@ -220,5 +227,4 @@
 
 </body>
 </html>
-
-
+```
