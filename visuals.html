@@ -149,7 +149,8 @@
         }
         
         /* リンクカード用のホバーエフェクト */
-        a.item:hover .text-content {
+        a.item:hover .text-content,
+        a.item:hover .caption {
             background: #222;
         }
         .read-more {
@@ -172,13 +173,15 @@
 
     <div class="gallery">
 
-        <div class="item">
-           <img src="higanbana.png" alt="彼岸花と夕暮れ">
+        <!-- 短歌カード：リンク付きに変更 -->
+        <a href="https://shuro1010.blog.jp" class="item" target="_blank" rel="noopener noreferrer">
+           <img src="higanbana.png" alt="彼岸花と夕暮れ" onerror="this.onerror=null; this.src='https://placehold.co/600x400/222/666?text=Higanbana';">
             <div class="caption">
                 <!-- タイトル削除 -->
                 <p>人生に意味などないさ彼岸花<br>燃える畦道泥む夕暮</p>
+                <p class="read-more">短歌ブログへ ↗</p>
             </div>
-        </div>
+        </a>
 
         <div class="item">
             <div class="video-container">
@@ -190,7 +193,7 @@
             </div>
         </div>
 
-        <!-- リンク付きカードに変更 -->
+        <!-- リンク付きカード -->
         <a href="https://note.com/shuro1010/n/n0684211200f4" class="item" target="_blank" rel="noopener noreferrer">
             <div class="text-content">
                 <h3>幻のフランス料理「シリトテ・ティエンヌ」</h3>
@@ -203,7 +206,7 @@
 
         <div class="item">
             <!-- 画像を差し替えました -->
-            <img src="Gemini_Generated_Image_mu1a6imu1a6imu1a.png" alt="Art">
+            <img src="Gemini_Generated_Image_mu1a6imu1a6imu1a.png" alt="Art" onerror="this.onerror=null; this.src='https://placehold.co/600x800/222/666?text=Art+Image';">
         </div>
 
         <div class="item">
@@ -216,6 +219,4 @@
     </div>
 
 </body>
-
 </html>
-
