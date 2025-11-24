@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visuals - Laboratory of Expression</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Kurenaido&family=Noto+Sans+JP:wght@300;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #050505;
+            --text-color: #f0f0f0;
+            --accent-neon: #0ff;
+            --accent-pink: #f0f;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Noto Sans JP', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* 戻るボタン */
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            color: #666;
+            text-decoration: none;
+            font-size: 0.8rem;
+            z-index: 100;
+            transition: color 0.3s;
+            mix-blend-mode: difference;
+        }
+        .back-link:hover { color: var(--accent-neon); }
+
+        /* タイトルエリア（グリッチエフェクト） */
+        header {
+            padding: 4rem 2rem 2rem;
+            text-align: center;
+        }
+
+        h1 {
+            font-family: 'Zen Kurenaido', sans-serif; /* 手書き風フォント */
+            font-size: 4rem;
+            margin: 0;
+            position: relative;
+            display: inline-block;
+            letter-spacing: 0.1em;
+            text-shadow: 2px 2px var(--accent-pink), -2px -2px var(--accent-neon);
+            animation: glitch 3s infinite alternate;
+        }
+
+        @keyframes glitch {
+            0% { text-shadow: 2px 2px var(--accent-pink), -2px -2px var(--accent-neon); }
+            20% { text-shadow: -2px 2px var(--accent-pink), 2px -2px var(--accent-neon); opacity: 0.8; }
+            40% { text-shadow: 2px -2px var(--accent-pink), -2px 2px var(--accent-neon); opacity: 1; }
+            100% { text-shadow: 2px 2px var(--accent-pink), -2px -2px var(--accent-neon); }
+        }
+
+        .subtitle {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 1rem;
+            letter-spacing: 0.3em;
+        }
+
+        /* カオスな配置（Masonry Layout） */
+        .gallery {
+            column-count: 3; /* 3列表示 */
+            column-gap: 1.5rem;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 900px) { .gallery { column-count: 2; } }
+        @media (max-width: 600px) { .gallery { column-count: 1; } }
+
+        /* コンテンツカード共通設定 */
+        .item {
+            background: #111;
+            border: 1px solid #333;
+            margin-bottom: 1.5rem;
+            break-inside: avoid;
+            overflow: hidden;
+            transition: transform 0.3s, border-color 0.3s;
+            position: relative;
+            display: block; /* aタグの場合にブロック要素として扱う */
+            color: inherit; /* 文字色を継承 */
+            text-decoration: none; /* 下線を消す */
+        }
+
+        .item:hover {
+            transform: scale(1.02);
+            border-color: var(--accent-neon);
+            z-index: 10;
+        }
+
+        .item img, .item video {
+            width: 100%;
+            height: auto;
+            display: block;
+            filter: grayscale(80%);
+            transition: filter 0.5s;
+        }
+        .item:hover img, .item:hover video { filter: grayscale(0%); }
+
+        .caption {
+            padding: 1rem;
+        }
+        .caption h3 { margin: 0 0 0.5rem; font-size: 1.1rem; }
+        .caption p { margin: 0; font-size: 0.8rem; color: #aaa; line-height: 1.6; }
+
+        /* Youtube埋め込み用 */
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 */
+            height: 0;
+            overflow: hidden;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+        }
+
+        /* テキスト作品（小説・コント） */
+        .text-content {
+            padding: 2rem;
+            font-family: 'Shippori Mincho', serif;
+            background: #1a1a1a;
+        }
+        .text-content h3 {
+            font-size: 1.5rem; /* 大きめ */
+            font-weight: bold; /* 太字 */
+            margin-top: 0;
+            margin-bottom: 1rem;
+            line-height: 1.4;
+        }
+        .text-content p {
+            margin-bottom: 1em;
+            text-align: justify;
+            font-size: 0.9rem;
+            line-height: 1.8;
+        }
+        
+        /* リンクカード用のホバーエフェクト */
+        a.item:hover .text-content {
+            background: #222;
+        }
+        .read-more {
+            text-align: right;
+            color: var(--accent-neon) !important;
+            font-size: 0.8rem !important;
+            margin-top: 1.5rem;
+        }
+
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="back-link">← LIBRARY</a>
+
+    <header>
+        <h1>表現の実験室</h1>
+        <p class="subtitle">VISUALS / SOUNDS / WORDS / CHAOS</p>
+    </header>
+
+    <div class="gallery">
+
+        <div class="item">
+            <img src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="短歌イメージ">
+            <div class="caption">
+                <!-- タイトル削除 -->
+                <p>人生に意味などないさ彼岸花<br>燃える畦道泥む夕暮</p>
+            </div>
+        </div>
+
+        <div class="item">
+            <div class="video-container">
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/NUtx_Q46XOQ?si=bxlb-sn0KHQBRux4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+            <div class="caption">
+                <h3>My YouTube Video</h3>
+                <p>実験的な映像作品のアーカイブ。</p>
+            </div>
+        </div>
+
+        <!-- リンク付きカードに変更 -->
+        <a href="https://note.com/shuro1010/n/n0684211200f4" class="item" target="_blank" rel="noopener noreferrer">
+            <div class="text-content">
+                <h3>幻のフランス料理「シリトテ・ティエンヌ」</h3>
+                <p>大学の室内楽サークルに所属するメンバーがこの日訪れたのは、サークルメンバーの中でもひときわ裕福な北條のマンション。彼が家を新しく借りたと聞いてから半年ほど経っているのだが、この広いマンションに足を踏み入れるのはメンバー全員初めてだ。</p>
+                <p>この日はサークルメンバーの中から北條を含め、ヴァイオリンの小野、チェロの石井、オーボエの藤澤、そしてフルートの桜井の五人が集まっていた。実はもう一人、ビオラの土屋もいるはずだったのだが、何かと遅刻癖のある男でまだ姿を現していない。</p>
+                <p>日が落ち始めた夕刻、北條のマンションに集まった四人はさっそく圧倒される。玄関からリビングまで広々とした空間で、天井も高く、壁や床の材質も高級感がある。家具類はそれほど多くないようだが、その分開放的な雰囲気がすごい。彼はピアニストでもあることから、部屋にはグランドピアノも置かれている。</p>
+                <p class="read-more">ここから先はnoteへ ↗</p>
+            </div>
+        </a>
+
+        <div class="item">
+            <!-- 画像を差し替えました -->
+            <img src="Gemini_Generated_Image_mu1a6imu1a6imu1a.jpg" alt="Art">
+        </div>
+
+        <div class="item">
+            <div class="caption">
+                <h3>Memo</h3>
+                <p>アイデアの断片。整理されていない思考。ここには何でも置いていい。それが実験室のルール。</p>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
