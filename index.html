@@ -445,16 +445,23 @@
         const bookCards = document.querySelectorAll('.book-card');
         bookCards.forEach(card => {
             card.addEventListener('click', function(e) {
-                // 外部リンクの場合は、アニメーション後に遷移
-                if (this.target === '_blank') {
-                    e.preventDefault();
-                    const href = this.href;
-                    this.classList.add('book-opening');
-                    setTimeout(() => {
+                e.preventDefault();
+                const href = this.href;
+                const target = this.target;
+                
+                // アニメーションを開始
+                this.classList.add('book-opening');
+                
+                // アニメーション後にページ遷移
+                setTimeout(() => {
+                    if (target === '_blank') {
                         window.open(href, '_blank');
-                        this.classList.remove('book-opening');
-                    }, 800);
-                }
+                    } else {
+                        window.location.href = href;
+                    }
+                    // アニメーションクラスを削除（戻るボタンで戻ってきた時のため）
+                    this.classList.remove('book-opening');
+                }, 800);
             });
         });
 
@@ -510,5 +517,3 @@
     </script>
 </body>
 </html>
-
-
