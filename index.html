@@ -48,6 +48,81 @@
             z-index: -1;
         }
 
+        /* -----------------------------------
+           今日の栞（しおり）機能のスタイル
+           ----------------------------------- */
+        .bookmark {
+            position: fixed;
+            /* サイズ変更に合わせて隠れる位置を調整 */
+            top: -380px; 
+            right: 8%;
+            /* 幅と高さを拡張 */
+            width: 85px;
+            height: 450px;
+            z-index: 100;
+            transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* バネのような動き */
+            cursor: pointer;
+            filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.5));
+        }
+
+        /* ホバーしたとき降りてくる */
+        .bookmark:hover {
+            top: 0 !important;
+        }
+
+        .bookmark-body {
+            background-color: #f4ecd8; /* 和紙っぽい色 */
+            width: 100%;
+            height: 100%;
+            padding: 1.5rem 1rem; /* パディングも少し調整 */
+            box-sizing: border-box;
+            writing-mode: vertical-rl; /* 縦書き */
+            display: flex;
+            align-items: center;
+            border-radius: 0 0 5px 5px;
+            /* 和紙のようなノイズテクスチャ */
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.15'/%3E%3C/svg%3E");
+        }
+
+        /* 紐の部分（アクセント） */
+        .bookmark-ribbon {
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 10px; /* 紐も少し太く */
+            height: 35px;
+            background-color: #8c3f3f; /* 赤紐のような色 */
+            border-radius: 4px;
+            z-index: -1;
+        }
+
+        #bookmark-text {
+            font-size: 1rem; /* 文字サイズ微増 */
+            color: #4a3b2a;
+            letter-spacing: 0.15em;
+            line-height: 2; /* 行間を広げて読みやすく */
+            margin: 0;
+            max-height: 350px; /* テキストエリアの上限を拡張 */
+            font-family: 'Shippori Mincho', serif;
+            font-weight: 600;
+        }
+
+        #bookmark-link {
+            font-size: 0.75rem;
+            color: #8c3f3f;
+            text-decoration: none;
+            margin-top: 1rem;
+            opacity: 0.6;
+            transition: opacity 0.3s;
+             writing-mode: vertical-rl;
+        }
+
+        #bookmark-link:hover {
+            opacity: 1;
+        }
+
+
         .container {
             max-width: 800px;
             margin: 0 auto;
@@ -301,11 +376,28 @@
             .book-card:hover {
                 transform: rotateY(-8deg) translateX(8px) translateZ(15px);
             }
+            
+            /* モバイルでも少し大きく */
+            .bookmark {
+                top: -280px;
+                right: 2%;
+                width: 60px;
+                height: 340px;
+            }
         }
     </style>
 </head>
 <body>
     <canvas id="canvas-background"></canvas>
+
+    <!-- 今日の栞（しおり） -->
+    <div id="bookmark" class="bookmark">
+        <div class="bookmark-ribbon"></div>
+        <div class="bookmark-body">
+            <p id="bookmark-text">思索を巡回中...</p>
+            <a id="bookmark-link" href="#" target="_blank" rel="noopener noreferrer">出典を開く</a>
+        </div>
+    </div>
 
     <div class="container">
         <section class="hero">
@@ -445,23 +537,16 @@
         const bookCards = document.querySelectorAll('.book-card');
         bookCards.forEach(card => {
             card.addEventListener('click', function(e) {
-                e.preventDefault();
-                const href = this.href;
-                const target = this.target;
-                
-                // アニメーションを開始
-                this.classList.add('book-opening');
-                
-                // アニメーション後にページ遷移
-                setTimeout(() => {
-                    if (target === '_blank') {
+                // 外部リンクの場合は、アニメーション後に遷移
+                if (this.target === '_blank') {
+                    e.preventDefault();
+                    const href = this.href;
+                    this.classList.add('book-opening');
+                    setTimeout(() => {
                         window.open(href, '_blank');
-                    } else {
-                        window.location.href = href;
-                    }
-                    // アニメーションクラスを削除（戻るボタンで戻ってきた時のため）
-                    this.classList.remove('book-opening');
-                }, 800);
+                        this.classList.remove('book-opening');
+                    }, 800);
+                }
             });
         });
 
@@ -483,17 +568,18 @@
             });
         });
 
-        // Noteの RSSを取得して表示するスクリプト
-        const rssUrl = 'https://note.com/shuro1010/rss';
-        const apiUrl = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(rssUrl);
+        /* -----------------------------------
+           Noteの RSSを取得して表示する
+           ----------------------------------- */
+        const noteRssUrl = 'https://note.com/shuro1010/rss';
+        const noteApiUrl = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(noteRssUrl);
 
-        fetch(apiUrl)
+        fetch(noteApiUrl)
             .then(response => response.json())
             .then(data => {
                 const feedContainer = document.getElementById('note-feed');
                 if (data.status === 'ok' && data.items.length > 0) {
-                    feedContainer.innerHTML = ''; // Loadingメッセージを消去
-                    // 記事を3つだけ取り出す
+                    feedContainer.innerHTML = ''; 
                     data.items.slice(0, 3).forEach(item => {
                         const date = new Date(item.pubDate);
                         const formattedDate = `${date.getFullYear()}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getDate().toString().padStart(2, '0')}`;
@@ -513,6 +599,84 @@
             .catch(error => {
                 console.error('Error fetching Note RSS:', error);
                 document.getElementById('note-feed').innerHTML = '<li class="update-item">情報が取得できませんでした</li>';
+            });
+
+        /* -----------------------------------
+           今日の栞機能（Livedoor Blog連携）
+           ----------------------------------- */
+        // LivedoorブログのRSS URL
+        const livedoorRssUrl = 'http://blog.livedoor.jp/shuro1010/index.rdf';
+        // API経由で取得することでHTTPSのページからでもHTTPのRSSを読めるようにする
+        const livedoorApiUrl = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(livedoorRssUrl);
+
+        fetch(livedoorApiUrl)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'ok' && data.items.length > 0) {
+                    // 1. 直近の記事をいくつか取得してプールする
+                    let textPool = [];
+                    
+                    data.items.slice(0, 5).forEach(item => {
+                        // HTMLタグを除去してテキストだけにする
+                        const div = document.createElement("div");
+                        div.innerHTML = item.description;
+                        const plainText = div.textContent || div.innerText || "";
+                        
+                        // 「。」「！」などで区切って文のリストにする
+                        // 正規表現で、文末の区切り文字を含むように分割
+                        const sentences = plainText.match(/[^。！？\n]*[。！？]/g) || [];
+                        
+                        sentences.forEach(sentence => {
+                            // 空白除去
+                            const cleanSentence = sentence.trim();
+                            // 短すぎる文（挨拶など）や長すぎる文を除外するフィルタ
+                            // ブログの文体に合わせて調整してください
+                            if (cleanSentence.length > 15 && cleanSentence.length < 50) {
+                                textPool.push({
+                                    text: cleanSentence,
+                                    link: item.link
+                                });
+                            }
+                        });
+                    });
+
+                    // 2. プールした文の中からランダムに1つ選ぶ
+                    const bookmarkText = document.getElementById('bookmark-text');
+                    const bookmarkLink = document.getElementById('bookmark-link');
+
+                    if (textPool.length > 0) {
+                        const randomPick = textPool[Math.floor(Math.random() * textPool.length)];
+                        
+                        // テキストを表示
+                        bookmarkText.textContent = randomPick.text;
+                        bookmarkLink.href = randomPick.link;
+                        
+                        // 3. 準備ができたら栞を少し下ろしてアピール（アニメーション）
+                        // 少し遅らせて実行することで、ページ読み込み後に動きが出る
+                        setTimeout(() => {
+                            const bookmark = document.getElementById('bookmark');
+                            // 一旦セット（CSSで定義済みだが念のため）
+                            // 顔出し演出：普段は -260px だが、一瞬 -220px まで降りてきて、また戻るなどの演出も可能
+                            // ここではシンプルに「少しはみ出た状態」にする
+                            
+                            // 修正：初期状態ですでに少しはみ出している（CSSで調整済みなら何もしなくてもいいが、ロード完了の合図として揺らす）
+                            bookmark.style.transform = "translateY(10px)";
+                            setTimeout(() => {
+                                bookmark.style.transform = "translateY(0)";
+                            }, 300);
+                        }, 1500);
+
+                    } else {
+                        // 良い文が見つからなかった場合のデフォルト
+                        bookmarkText.textContent = "灯火親しむべし。";
+                        bookmarkLink.href = "http://blog.livedoor.jp/shuro1010/";
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching Livedoor RSS:', error);
+                document.getElementById('bookmark-text').textContent = "雨読晴耕。";
+                document.getElementById('bookmark-link').href = "http://blog.livedoor.jp/shuro1010/";
             });
     </script>
 </body>
