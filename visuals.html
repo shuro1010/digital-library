@@ -184,12 +184,88 @@
         }
 
         @media (max-width: 900px) {
+            .music-player {
+                padding: 1rem;
+            }
+            
             .player-container {
                 grid-template-columns: 1fr;
                 gap: 1rem;
             }
+            
             .visualizer-container {
-                order: -1;
+                flex-wrap: wrap;
+                justify-content: space-between;
+            }
+            
+            #visualizer {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+            
+            .volume-control {
+                flex: 1;
+            }
+            
+            .playlist-toggle {
+                flex: 1;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            body {
+                padding-bottom: 180px; /* プレーヤーが高くなるので余白を増やす */
+            }
+            
+            .music-player {
+                padding: 0.75rem;
+            }
+            
+            .track-info {
+                gap: 0.5rem;
+            }
+            
+            .track-info .artwork {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+            
+            .track-details h4 {
+                font-size: 0.8rem;
+            }
+            
+            .track-details p {
+                font-size: 0.7rem;
+            }
+            
+            .control-buttons {
+                gap: 0.5rem;
+            }
+            
+            .control-buttons button {
+                width: 35px;
+                height: 35px;
+                font-size: 0.9rem;
+            }
+            
+            .control-buttons button.play-pause {
+                width: 45px;
+                height: 45px;
+                font-size: 1.1rem;
+            }
+            
+            .progress-container {
+                font-size: 0.65rem;
+            }
+            
+            .volume-control input[type="range"] {
+                width: 60px;
+            }
+            
+            .playlist-toggle {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.75rem;
             }
         }
 
@@ -437,6 +513,24 @@
                 right: 1rem;
                 left: 1rem;
                 width: auto;
+                bottom: 180px; /* プレーヤーの高さに合わせて調整 */
+                max-height: 300px;
+            }
+            
+            .playlist-item {
+                padding: 0.5rem;
+            }
+            
+            .playlist-item-info h5 {
+                font-size: 0.8rem;
+            }
+            
+            .playlist-item-info p {
+                font-size: 0.65rem;
+            }
+            
+            .playlist-item-duration {
+                font-size: 0.65rem;
             }
         }
 
@@ -554,10 +648,10 @@
         // プレイリストデータ（ここに曲を追加してください）
         const playlist = [
             {
-                title: "バジルの想ひ出",
-                artist: "shuro1010",
-                src: "バジルの想ひ出.mp3",
-                duration: "2:23"
+                title: "サンプル曲 1",
+                artist: "アーティスト名",
+                src: "path/to/your/music1.mp3",
+                duration: "3:45"
             },
             {
                 title: "サンプル曲 2",
@@ -830,7 +924,3 @@
 
 </body>
 </html>
-</html>
-
-
-
