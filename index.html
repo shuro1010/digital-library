@@ -122,6 +122,39 @@
             opacity: 1;
         }
 
+        /* 栞の上部に表示される「出典を開く」ボタン */
+        .bookmark-button {
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #8c3f3f;
+            color: #f4ecd8;
+            padding: 0.4rem 0.6rem;
+            border-radius: 3px;
+            font-size: 0.65rem;
+            text-decoration: none;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s, background-color 0.3s;
+            white-space: nowrap;
+            letter-spacing: 0.05em;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            z-index: 10;
+            /* PCでは非表示 */
+            display: none;
+        }
+
+        .bookmark-button:hover {
+            background-color: #a14f4f;
+        }
+
+        /* 栞がホバーされたときにボタンを表示 */
+        .bookmark:hover .bookmark-button {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
 
         .container {
             max-width: 800px;
@@ -394,15 +427,27 @@
             #bookmark-link {
                 display: none;
             }
+            
+            /* モバイルのみボタンを表示 */
+            .bookmark-button {
+                display: block;
+            }
+            
+            /* モバイルでは栞が降りてきたときにボタンを表示 */
+            .bookmark.show-content .bookmark-button {
+                opacity: 1;
+                pointer-events: auto;
+            }
         }
     </style>
 </head>
 <body>
     <canvas id="canvas-background"></canvas>
 
-    <!-- 今日の栞（しおり） -->
+    <!-- 今日の栞(しおり) -->
     <div id="bookmark" class="bookmark">
         <div class="bookmark-ribbon"></div>
+        <a id="bookmark-button" class="bookmark-button" href="#" target="_blank" rel="noopener noreferrer">出典を開く</a>
         <div class="bookmark-body">
             <p id="bookmark-text">思索を巡回中...</p>
             <a id="bookmark-link" href="#" target="_blank" rel="noopener noreferrer">出典を開く</a>
@@ -590,16 +635,36 @@
            ----------------------------------- */
         const bookmark = document.getElementById('bookmark');
         const bookmarkLink = document.getElementById('bookmark-link');
+        const bookmarkButton = document.getElementById('bookmark-button');
         let bookmarkUrl = '#';
 
-        // スマホでは栞全体をタップでリンクに飛ぶように
+        // スマホで栞をタップしたときの動作
+        let bookmarkExpanded = false;
+        
         bookmark.addEventListener('click', function(e) {
-            // モバイルかどうかを判定
             const isMobile = window.innerWidth <= 600;
             
-            if (isMobile && bookmarkUrl !== '#') {
-                // モバイルの場合、栞全体のクリックでリンクを開く
-                window.open(bookmarkUrl, '_blank');
+            if (isMobile) {
+                // ボタンのクリックでない場合
+                if (e.target !== bookmarkButton) {
+                    e.preventDefault();
+                    
+                    // 栞を降ろす/上げる
+                    if (!bookmarkExpanded) {
+                        bookmark.style.top = '0';
+                        bookmark.classList.add('show-content');
+                        bookmarkExpanded = true;
+                    } else {
+                        bookmark.style.top = '-320px';
+                        bookmark.classList.remove('show-content');
+                        bookmarkExpanded = false;
+                    }
+                }
+            } else {
+                // PCの場合は何もしない（ボタンのクリック以外）
+                if (e.target !== bookmarkButton) {
+                    e.preventDefault();
+                }
             }
         });
 
@@ -684,6 +749,7 @@
                         // テキストを表示
                         bookmarkText.textContent = randomPick.text;
                         bookmarkLink.href = randomPick.link;
+                        bookmarkButton.href = randomPick.link;
                         bookmarkUrl = randomPick.link; // グローバル変数に保存
                         
                         // 3. 準備ができたら栞を少し下ろしてアピール（アニメーション）
@@ -700,6 +766,7 @@
                         // 良い文が見つからなかった場合のデフォルト
                         bookmarkText.textContent = "灯火親しむべし。";
                         bookmarkLink.href = "http://blog.livedoor.jp/shuro1010/";
+                        bookmarkButton.href = "http://blog.livedoor.jp/shuro1010/";
                         bookmarkUrl = "http://blog.livedoor.jp/shuro1010/";
                     }
                 }
@@ -708,6 +775,7 @@
                 console.error('Error fetching Livedoor RSS:', error);
                 document.getElementById('bookmark-text').textContent = "雨読晴耕。";
                 document.getElementById('bookmark-link').href = "http://blog.livedoor.jp/shuro1010/";
+                bookmarkButton.href = "http://blog.livedoor.jp/shuro1010/";
                 bookmarkUrl = "http://blog.livedoor.jp/shuro1010/";
             });
     </script>
