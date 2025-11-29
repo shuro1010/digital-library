@@ -377,12 +377,22 @@
                 transform: rotateY(-8deg) translateX(8px) translateZ(15px);
             }
             
-            /* モバイルでも少し大きく */
+            /* モバイルでの栞サイズを拡張 */
             .bookmark {
-                top: -280px;
+                top: -320px;
                 right: 2%;
-                width: 60px;
-                height: 340px;
+                width: 85px;
+                height: 380px;
+            }
+            
+            /* モバイルでは文字サイズを少し小さく */
+            #bookmark-text {
+                font-size: 0.9rem;
+            }
+            
+            /* モバイルではリンクを非表示にして誤タップを防ぐ */
+            #bookmark-link {
+                display: none;
             }
         }
     </style>
@@ -576,6 +586,24 @@
         });
 
         /* -----------------------------------
+           栞のクリック動作（スマホ対応）
+           ----------------------------------- */
+        const bookmark = document.getElementById('bookmark');
+        const bookmarkLink = document.getElementById('bookmark-link');
+        let bookmarkUrl = '#';
+
+        // スマホでは栞全体をタップでリンクに飛ぶように
+        bookmark.addEventListener('click', function(e) {
+            // モバイルかどうかを判定
+            const isMobile = window.innerWidth <= 600;
+            
+            if (isMobile && bookmarkUrl !== '#') {
+                // モバイルの場合、栞全体のクリックでリンクを開く
+                window.open(bookmarkUrl, '_blank');
+            }
+        });
+
+        /* -----------------------------------
            Noteの RSSを取得して表示する
            ----------------------------------- */
         const noteRssUrl = 'https://note.com/shuro1010/rss';
@@ -631,7 +659,7 @@
                         
                         // 「。」「！」などで区切って文のリストにする
                         // 正規表現で、文末の区切り文字を含むように分割
-                        const sentences = plainText.match(/[^。！？\n]*[。！？]/g) || [];
+                        const sentences = plainText.match(/[^。！?\n]*[。！?]/g) || [];
                         
                         sentences.forEach(sentence => {
                             // 空白除去
@@ -649,7 +677,6 @@
 
                     // 2. プールした文の中からランダムに1つ選ぶ
                     const bookmarkText = document.getElementById('bookmark-text');
-                    const bookmarkLink = document.getElementById('bookmark-link');
 
                     if (textPool.length > 0) {
                         const randomPick = textPool[Math.floor(Math.random() * textPool.length)];
@@ -657,15 +684,11 @@
                         // テキストを表示
                         bookmarkText.textContent = randomPick.text;
                         bookmarkLink.href = randomPick.link;
+                        bookmarkUrl = randomPick.link; // グローバル変数に保存
                         
                         // 3. 準備ができたら栞を少し下ろしてアピール（アニメーション）
                         // 少し遅らせて実行することで、ページ読み込み後に動きが出る
                         setTimeout(() => {
-                            const bookmark = document.getElementById('bookmark');
-                            // 一旦セット（CSSで定義済みだが念のため）
-                            // 顔出し演出：普段は -260px だが、一瞬 -220px まで降りてきて、また戻るなどの演出も可能
-                            // ここではシンプルに「少しはみ出た状態」にする
-                            
                             // 修正：初期状態ですでに少しはみ出している（CSSで調整済みなら何もしなくてもいいが、ロード完了の合図として揺らす）
                             bookmark.style.transform = "translateY(10px)";
                             setTimeout(() => {
@@ -677,6 +700,7 @@
                         // 良い文が見つからなかった場合のデフォルト
                         bookmarkText.textContent = "灯火親しむべし。";
                         bookmarkLink.href = "http://blog.livedoor.jp/shuro1010/";
+                        bookmarkUrl = "http://blog.livedoor.jp/shuro1010/";
                     }
                 }
             })
@@ -684,6 +708,7 @@
                 console.error('Error fetching Livedoor RSS:', error);
                 document.getElementById('bookmark-text').textContent = "雨読晴耕。";
                 document.getElementById('bookmark-link').href = "http://blog.livedoor.jp/shuro1010/";
+                bookmarkUrl = "http://blog.livedoor.jp/shuro1010/";
             });
     </script>
 </body>
