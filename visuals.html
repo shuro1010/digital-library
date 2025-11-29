@@ -17,7 +17,7 @@
 
         body {
             margin: 0;
-            padding: 0 0 140px 0; /* プレーヤー分の余白を追加 */
+            padding: 0;
             background-color: var(--bg-color);
             color: var(--text-color);
             font-family: 'Noto Sans JP', sans-serif;
@@ -45,7 +45,7 @@
         }
 
         h1 {
-            font-family: 'Zen Kurenaido', sans-serif; /* 手書き風フォント */
+            font-family: 'Zen Kurenaido', sans-serif;
             font-size: 4rem;
             margin: 0;
             position: relative;
@@ -71,7 +71,7 @@
 
         /* カオスな配置（Masonry Layout） */
         .gallery {
-            column-count: 3; /* 3列表示 */
+            column-count: 3;
             column-gap: 1.5rem;
             padding: 2rem;
             max-width: 1200px;
@@ -90,9 +90,9 @@
             overflow: hidden;
             transition: transform 0.3s, border-color 0.3s;
             position: relative;
-            display: block; /* aタグの場合にブロック要素として扱う */
-            color: inherit; /* 文字色を継承 */
-            text-decoration: none; /* 下線を消す */
+            display: block;
+            color: inherit;
+            text-decoration: none;
         }
 
         .item:hover {
@@ -119,7 +119,7 @@
         /* Youtube埋め込み用 */
         .video-container {
             position: relative;
-            padding-bottom: 56.25%; /* 16:9 */
+            padding-bottom: 56.25%;
             height: 0;
             overflow: hidden;
         }
@@ -135,8 +135,8 @@
             background: #1a1a1a;
         }
         .text-content h3 {
-            font-size: 1.5rem; /* 大きめ */
-            font-weight: bold; /* 太字 */
+            font-size: 1.5rem;
+            font-weight: bold;
             margin-top: 0;
             margin-bottom: 1rem;
             line-height: 1.4;
@@ -172,6 +172,41 @@
             z-index: 1000;
             backdrop-filter: blur(10px);
             box-shadow: 0 -4px 20px rgba(0, 255, 255, 0.3);
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .music-player.show {
+            transform: translateY(0);
+        }
+
+        /* プレーヤートグルボタン */
+        .player-toggle {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(10, 10, 10, 0.95);
+            border: 1px solid var(--accent-neon);
+            border-bottom: none;
+            color: var(--accent-neon);
+            padding: 0.5rem 1.5rem;
+            cursor: pointer;
+            font-size: 0.8rem;
+            border-radius: 8px 8px 0 0;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 -4px 20px rgba(0, 255, 255, 0.2);
+            transition: all 0.3s;
+            z-index: 1001;
+        }
+
+        .player-toggle:hover {
+            background: rgba(20, 20, 20, 0.95);
+            box-shadow: 0 -4px 20px rgba(0, 255, 255, 0.4);
+        }
+
+        .player-toggle::before {
+            content: '🎵 ';
         }
 
         .player-container {
@@ -213,8 +248,10 @@
         }
         
         @media (max-width: 600px) {
-            body {
-                padding-bottom: 180px; /* プレーヤーが高くなるので余白を増やす */
+            .player-toggle {
+                top: -35px;
+                padding: 0.4rem 1rem;
+                font-size: 0.7rem;
             }
             
             .music-player {
@@ -513,7 +550,7 @@
                 right: 1rem;
                 left: 1rem;
                 width: auto;
-                bottom: 180px; /* プレーヤーの高さに合わせて調整 */
+                bottom: 180px;
                 max-height: 300px;
             }
             
@@ -592,7 +629,8 @@
     </div>
 
     <!-- 音楽プレーヤー -->
-    <div class="music-player">
+    <div class="music-player" id="music-player">
+        <button class="player-toggle" id="player-toggle">PLAYER</button>
         <div class="player-container">
             <!-- 曲情報 -->
             <div class="track-info">
@@ -645,7 +683,7 @@
     <audio id="audio-player"></audio>
 
     <script>
-        // プレイリストデータ（ここに曲を追加してください）
+        // プレイリストデータ
         const playlist = [
             {
                 title: "バジルの想ひ出",
@@ -684,6 +722,8 @@
         const playlistToggle = document.getElementById('playlist-toggle');
         const playlistEl = document.getElementById('playlist');
         const playlistItems = document.getElementById('playlist-items');
+        const musicPlayer = document.getElementById('music-player');
+        const playerToggle = document.getElementById('player-toggle');
 
         // ビジュアライザー
         const canvas = document.getElementById('visualizer');
@@ -701,13 +741,8 @@
 
         // 初期化
         function init() {
-            // プレイリストを生成
             renderPlaylist();
-            
-            // 初期音量設定
             audio.volume = volumeSlider.value / 100;
-
-            // 最初の曲をロード（再生はしない）
             if (playlist.length > 0) {
                 loadTrack(0);
             }
@@ -745,7 +780,6 @@
             trackTitle.textContent = track.title;
             trackArtist.textContent = track.artist;
             
-            // プレイリストのアクティブ状態を更新
             document.querySelectorAll('.playlist-item').forEach((item, i) => {
                 if (i === index) {
                     item.classList.add('active');
@@ -761,7 +795,6 @@
             isPlaying = true;
             playPauseBtn.textContent = '⏸';
             
-            // ビジュアライザーの初期化（初回のみ）
             if (!audioContext) {
                 initVisualizer();
             }
@@ -773,6 +806,12 @@
             isPlaying = false;
             playPauseBtn.textContent = '▶';
         }
+
+        // プレーヤー表示切替
+        playerToggle.addEventListener('click', () => {
+            musicPlayer.classList.toggle('show');
+            playerToggle.textContent = musicPlayer.classList.contains('show') ? 'CLOSE' : 'PLAYER';
+        });
 
         // 再生/一時停止トグル
         playPauseBtn.addEventListener('click', () => {
@@ -906,7 +945,6 @@
             for (let i = 0; i < bufferLength; i++) {
                 const barHeight = (dataArray[i] / 255) * canvas.height;
                 
-                // グラデーション（ネオンカラー）
                 const gradient = canvasCtx.createLinearGradient(0, canvas.height - barHeight, 0, canvas.height);
                 gradient.addColorStop(0, '#0ff');
                 gradient.addColorStop(1, '#f0f');
@@ -924,4 +962,3 @@
 
 </body>
 </html>
-
