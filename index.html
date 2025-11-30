@@ -645,8 +645,8 @@
             const isMobile = window.innerWidth <= 600;
             
             if (isMobile) {
-                // ボタンのクリックの場合は何もしない（リンクを開く）
-                if (e.target === bookmarkButton) {
+                // ボタンまたはリンクのクリックの場合は何もしない（リンクを開く）
+                if (e.target === bookmarkButton || e.target === bookmarkLink) {
                     return;
                 }
                 
@@ -665,10 +665,13 @@
                     bookmarkExpanded = false;
                 }
             } else {
-                // PCの場合は何もしない（ボタンのクリック以外）
-                if (e.target !== bookmarkButton) {
-                    e.preventDefault();
+                // PCの場合：ボタンとリンクのクリックは許可
+                if (e.target === bookmarkButton || e.target === bookmarkLink) {
+                    // リンクのデフォルト動作を許可（何もしない）
+                    return;
                 }
+                // それ以外の栞部分をクリックした場合は何もしない
+                e.preventDefault();
             }
         });
 
